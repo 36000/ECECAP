@@ -25,7 +25,7 @@ class Motor:
         self.pwm.stop()
 
 class Motors:
-    def __init__(self, motorPinRearLeft=13, motorPinRearRight=12, motorPinFrontLeft=33, motorPinFrontRight=32, defSpeed = 100.0, defTime = 1.0):
+    def __init__(self, motorPinRearLeft=32, motorPinRearRight=13, motorPinFrontLeft=12, motorPinFrontRight=33, defSpeed = 100.0, defTime = 1.0):
         GPIO.setmode(GPIO.BOARD)
         self.motors = [Motor(motorPinRearLeft), Motor(motorPinRearRight), Motor(motorPinFrontLeft), Motor(motorPinFrontRight)]
         self.timer = Timer(defTime, self.stop)
