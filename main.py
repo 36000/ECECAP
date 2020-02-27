@@ -1,18 +1,12 @@
-from bluetooth import Bluetooth
+from bluetooth_wrap import BluetoothWrap
 from motor import Motors
 from time import sleep
 import sys
 
-if len(sys.argv) > 1:
-    channel = int(sys.argv[1])
-else:
-    channel = 0
-print("Using rfcomm" + str(channel))
-
 commandTime = 1.0
 speed = 100.0
 
-bluetooth = Bluetooth(channel=channel)
+bluetooth = BluetoothWrap()
 motors = Motors(defSpeed=speed, defTime=commandTime)
 
 try: 
@@ -29,5 +23,6 @@ try:
             motors.turnLeft()
 
 		
-except KeyboardInterrupt:
-	motors.clean()
+except:
+    motors.clean()
+    bluetooth.clean()
