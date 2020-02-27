@@ -1,7 +1,6 @@
 from bluetooth_wrap import BluetoothWrap
 from motor import Motors
 from time import sleep
-import sys
 
 commandTime = 1.0
 speed = 100.0

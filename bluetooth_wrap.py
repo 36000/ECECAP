@@ -1,4 +1,5 @@
-import wiringpi, bluetooth, subprocess
+import bluetooth, subprocess
+from time import sleep
 
 class BluetoothWrap:
     def __init__(self):
@@ -10,8 +11,15 @@ class BluetoothWrap:
             found = False
             while not found:
                 self.print('Searching For Device...')
-                nearby_devices = bluetooth.discover_devices(duration=5,lookup_names=True,
-                                                            flush_cache=True, lookup_class=False)
+                b_is_on = False
+                while not b_is_on:
+                    try:
+                        nearby_devices = bluetooth.discover_devices(duration=3,lookup_names=True,
+                                                                    flush_cache=True, lookup_class=False)
+                        b_is_on = True
+                    except OSError:
+                        self.print('Bluetooth Still Off...')
+                        sleep(1.0) # wait for bluetooth to turn on
                 for device in nearby_devices:
                     if device[0] == addr and device[1] == name:
                         found = True
@@ -20,19 +28,6 @@ class BluetoothWrap:
             try:
                 self.s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
                 self.s.connect((addr,1))
-                # self.s.listen(1)
-
-                # uuid = "a3259ff2-c323-476f-baa9-fdd93248350b"
-                # bluetooth.advertise_service(
-                #     self.s,
-                #     "SampleServer",
-                #     service_id = uuid,
-                #     service_classes = [uuid, bluetooth.SERIAL_PORT_CLASS],
-                #     profiles = [bluetooth.SERIAL_PORT_PROFILE]
-                # )
-                   
-                # self.cs, c_addr = self.s.accept()
-
                 self.print('Connected to ' +  addr)
                 connected = True
 
@@ -44,8 +39,21 @@ class BluetoothWrap:
                 self.print('Trying again.')
 
     def getChar(self):
-        self.s.recv(1024)
-    
+        c = self.s.recv(1)
+        return c
+
+    def _temp(self):
+        c = self.s.recv(1)
+        if c == b'\xfc':
+            return 's'
+        if c == b'\x80':
+            return 'f'
+        if c == b'\xdf':
+            return 'r'
+        if c == b'\x00':
+            return 'l'
+        return 'E'
+
     def send(self, data):
         self.s.send(data)
     

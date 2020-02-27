@@ -1,5 +1,5 @@
-import wiringpi
+from bluetooth_wrap import BluetoothWrap
 
-wiringpi.wiringPiSetup()
-serial = wiringpi.serialOpen('/dev/rfcomm0',9600)
-wiringpi.serialPuts(serial,'b')
+bluetooth = BluetoothWrap()
+print(bluetooth.getChar())
+bluetooth.clean()
