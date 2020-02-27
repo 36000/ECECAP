@@ -41,6 +41,9 @@ class BluetoothWrap:
     def getChar(self):
         c = self.s.recv(1)
         return c
+    
+    def getAudio(self):
+        return self.s.recv(6000)
 
     def _temp(self):
         c = self.s.recv(1)
