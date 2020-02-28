@@ -4,7 +4,7 @@ from speech_recog import SpeechRecog
 from time import sleep
 import sys
 
-t_audio = False
+t_audio = True
 
 commandTime = 1.0
 speed = 100.0
@@ -19,6 +19,7 @@ try:
         if t_audio:
             r = bluetooth.getAudio()
             print(r)
+            sr.play(r)
             q = sr.recog(r)
             print(q)
             sleep(2.0)
