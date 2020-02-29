@@ -2,7 +2,7 @@ import bluetooth, subprocess
 from time import sleep
 
 class BluetoothWrap:
-    def __init__(self):
+    def __init__(self, sample_size=30000):
         connected = False
         while not connected:
             name = 'HC-06'
@@ -37,25 +37,13 @@ class BluetoothWrap:
                 except:
                     pass
                 self.print('Trying again.')
+        self.sample_size = sample_size
 
     def getChar(self):
-        c = self.s.recv(1)
-        return c
+        return self.s.recv(1)
     
     def getAudio(self):
-        return self.s.recv(6000)
-
-    def _temp(self):
-        c = self.s.recv(1)
-        if c == b'\xfc':
-            return 's'
-        if c == b'\x80':
-            return 'f'
-        if c == b'\xdf':
-            return 'r'
-        if c == b'\x00':
-            return 'l'
-        return 'E'
+        return self.s.recv(self.sample_size)
 
     def send(self, data):
         self.s.send(data)
@@ -64,5 +52,4 @@ class BluetoothWrap:
         print('Bluetooth-Module: ' + string)
     
     def clean(self):
-        #self.cs.close()
         self.s.close()

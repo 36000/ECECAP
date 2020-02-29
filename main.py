@@ -2,7 +2,9 @@ from bluetooth_wrap import BluetoothWrap
 from motor import Motors
 from speech_recog import SpeechRecog
 from time import sleep
-import sys
+import sys, datetime
+
+print("Started At: " + str(datetime.datetime.now()))
 
 t_audio = True
 
@@ -20,9 +22,9 @@ try:
             r = bluetooth.getAudio()
             print(r)
             sr.play(r)
-            q = sr.recog(r)
-            print(q)
-            sleep(2.0)
+            #q = sr.recog(r)
+            #print(q)
+            sleep(5.0)
         else:
             r = bluetooth.getChar()
             if r != prev_r:
