@@ -1,8 +1,10 @@
 import bluetooth, subprocess
+import scipy.signal as scs
+import struct
 from time import sleep
 
 class BluetoothWrap:
-    def __init__(self, sample_size=30000):
+    def __init__(self, sample_size=1600):
         connected = False
         while not connected:
             name = 'HC-06'
@@ -43,7 +45,35 @@ class BluetoothWrap:
         return self.s.recv(1)
     
     def getAudio(self):
-        return self.s.recv(self.sample_size)
+        signal = bytearray()
+        while len(signal) < 1600:
+            signal.extend(self.s.recv(self.sample_size))
+        
+        return signal
+
+        try:
+            x = struct.unpack('f', signal)
+        except struct.error:
+            return signal
+        return x
+
+
+        downsample = 16
+
+        pdm_b = []
+        for ba in signal:
+            for b in bin(ba)[2:]:
+                pdm_b.append(int(b))
+
+        return pdm_b
+
+        b, a = scs.butter(3, 0.05)
+        pdm_b = scs.lfilter(b, a, pdm_b)
+
+        try:
+            return scs.decimate(pdm_b, downsample).copy(order='C')
+        except ValueError:
+            return None
 
     def send(self, data):
         self.s.send(data)

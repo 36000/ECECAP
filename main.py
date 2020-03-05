@@ -6,8 +6,6 @@ import sys, datetime
 
 print("Started At: " + str(datetime.datetime.now()))
 
-t_audio = True
-
 commandTime = 1.0
 speed = 100.0
 
@@ -18,24 +16,16 @@ motors = Motors(defSpeed=speed, defTime=commandTime)
 try: 
     prev_r = 0
     while True:
-        if t_audio:
-            r = bluetooth.getAudio()
-            print(r)
-            sr.play(r)
-            #q = sr.recog(r)
-            #print(q)
-            sleep(5.0)
-        else:
             r = bluetooth.getChar()
             if r != prev_r:
-                print(r)
-            if r == 253:
+                print(r, end='')
+            if r == b'f':
                 motors.forward()
-            elif r == 255:
+            elif r == b's':
                 motors.stop()
-            elif r == 248:
+            elif r == b'r':
                 motors.turnRight()
-            elif r == 254:
+            elif r == b'l':
                 motors.turnLeft()
 
 		
