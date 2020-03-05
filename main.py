@@ -16,17 +16,18 @@ motors = Motors(defSpeed=speed, defTime=commandTime)
 try: 
     prev_r = 0
     while True:
-            r = bluetooth.getChar()
-            if r != prev_r:
-                print(r, end='')
-            if r == b'f':
-                motors.forward()
-            elif r == b's':
-                motors.stop()
-            elif r == b'r':
-                motors.turnRight()
-            elif r == b'l':
-                motors.turnLeft()
+        r = bluetooth.getByte()
+        
+        if r != prev_r:
+            print(r, end=' ')
+        if r == b'f':
+            motors.forward()
+        elif r == b's':
+            motors.stop()
+        elif r == b'r':
+            motors.turnRight()
+        elif r == b'l':
+            motors.turnLeft()
 
 		
 except KeyboardInterrupt:

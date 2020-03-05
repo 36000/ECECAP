@@ -41,31 +41,20 @@ class BluetoothWrap:
                 self.print('Trying again.')
         self.sample_size = sample_size
 
-    def getChar(self):
+    def getByte(self):
         return self.s.recv(1)
     
     def getAudio(self):
         signal = bytearray()
         while len(signal) < 1600:
             signal.extend(self.s.recv(self.sample_size))
-        
-        return signal
 
-        try:
-            x = struct.unpack('f', signal)
-        except struct.error:
-            return signal
-        return x
-
-
-        downsample = 16
+        downsample = 1
 
         pdm_b = []
         for ba in signal:
             for b in bin(ba)[2:]:
                 pdm_b.append(int(b))
-
-        return pdm_b
 
         b, a = scs.butter(3, 0.05)
         pdm_b = scs.lfilter(b, a, pdm_b)
