@@ -1,25 +1,33 @@
 import speech_recognition as sr
-import simpleaudio as sa
+import pyaudio as pa
 
 class SpeechRecog:
     def __init__(self):
         self.r = sr.Recognizer()
+        self.r.pause_threshold = 0.5
+        #self.r.energy_threshold = 50
+        #self.r.dynamic_energy_threshold = False
 
-        self.sample_rate = 8000 #16000 #16000 # 8000 # 32000
-        self.sample_width = 2
-        self.test_sample = b"T\xb5M\xaddKT\xad.\xd5MM\x92S5\xd9MUUU6\x8dSU\x93\x95Me\x8b\x96M\x995\xa9ee\x95\x95\x95VUf\x95fiefeU\x99i\xa6\x99VV\x9affj\xa5\xa5e\xa5\xa9Z\xa9\x95\xa9\x95\xb2W\xaa\xa6)\xaa\xa5\xa6\x9a\xc9\xa5\xa6\xaa"
+        self.sample_rate = 44100
 
-    def recog(self, audio):
+        self.dev_index = None
+        for i, microphone_name in enumerate(sr.Microphone.list_microphone_names()):
+            if "Audio" in microphone_name:
+                self.print("Audio Device Found: " + microphone_name)
+                self.dev_index = i
+
+        if self.dev_index is None:
+            self.print("Error: No Device Found")
+
+    def recog(self, mic):
         try:
-            result = self.r.recognize_google(sr.AudioData(audio, self.sample_rate, self.sample_width))
+            return self.r.recognize_google(self.r.listen(mic,
+                                                         phrase_time_limit=2),
+                                           language='en-us',
+                                           show_all=False)
         except sr.UnknownValueError:
-            result = None
-        return result
-    
-    def play(self, audio):
-        try:
-            play_obj = sa.play_buffer(audio, 1, self.sample_width, self.sample_rate)
-            #play_obj.wait_done()
-        except ValueError as ve:
-            print("Speech Recognition: " + str(ve))
+            return None
+
+    def print(self, string):
+        print('Speech-Module: ' + string)
 

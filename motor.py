@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
-from threading import Timer
+import threading
+from bluetooth_wrap import BluetoothWrap
 
 from time import sleep
 from enum import Enum
@@ -24,13 +25,42 @@ class Motor:
     def stop(self):
         self.pwm.stop()
 
-class Motors:
+class Motors(threading.Thread):
     def __init__(self, motorPinRearLeft=32, motorPinRearRight=13, motorPinFrontLeft=12, motorPinFrontRight=33, defSpeed = 100.0, defTime = 1.0):
         GPIO.setmode(GPIO.BOARD)
+        threading.Thread.__init__(self)
         self.motors = [Motor(motorPinRearLeft), Motor(motorPinRearRight), Motor(motorPinFrontLeft), Motor(motorPinFrontRight)]
-        self.timer = Timer(defTime, self.stop)
+        self.timer = threading.Timer(defTime, self.stop)
         self.time = defTime
         self.speed = defSpeed
+        self.speech_controlled = False
+    
+    def run(self):
+        self.bluetooth = BluetoothWrap()
+        prev_r = 0
+        try:
+            while True:
+                r = self.bluetooth.getByte()
+                
+                if self.speech_controlled:
+                    continue
+
+                if r != prev_r:
+                    print(r, end=' ')
+                if r == b'f':
+                    self.forward()
+                elif r == b's':
+                    self.stop()
+                elif r == b'r':
+                    self.turnRight()
+                elif r == b'l':
+                    self.turnLeft()
+                
+                prev_r = r
+        except KeyboardInterrupt:
+            self.bluetooth.clean()
+        
+
 
     def _move(self, motors, speed, time):
         if speed == None:
@@ -43,7 +73,7 @@ class Motors:
             motor.setSpeed(speed)
 
         self.timer.cancel()
-        self.timer = Timer(time, self.stop)
+        self.timer = threading.Timer(time, self.stop)
         self.timer.start()
 
     def forward(self, speed=None, time=None):
