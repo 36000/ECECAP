@@ -4,8 +4,7 @@ import pyaudio as pa
 class SpeechRecog:
     def __init__(self):
         self.r = sr.Recognizer()
-        self.r.pause_threshold = 0.5
-        #self.r.energy_threshold = 50
+        self.r.energy_threshold = 200
         #self.r.dynamic_energy_threshold = False
 
         self.sample_rate = 44100
@@ -22,8 +21,14 @@ class SpeechRecog:
     def recog(self, mic):
         try:
             return self.r.recognize_google(self.r.listen(mic,
-                                                         phrase_time_limit=2),
-                                           language='en-us',
+                                                         phrase_time_limit=3),
+                                        #    keyword_entries=[
+                                        #        ("right", 1.0),
+                                        #        ("left", 1.0),
+                                        #        ("stop", 1.0),
+                                        #        ("forward", 1.0),
+                                        #    ],
+                                           language='en-US',
                                            show_all=False)
         except sr.UnknownValueError:
             return None
