@@ -20,14 +20,14 @@ class SpeechRecog:
 
     def recog(self, mic):
         try:
-            return self.r.recognize_google(self.r.listen(mic,
-                                                         phrase_time_limit=3),
-                                        #    keyword_entries=[
-                                        #        ("right", 1.0),
-                                        #        ("left", 1.0),
-                                        #        ("stop", 1.0),
-                                        #        ("forward", 1.0),
-                                        #    ],
+            return self.r.recognize_sphinx(self.r.listen(mic,
+                                                         phrase_time_limit=2),
+                                           keyword_entries=[
+                                               ("right", 1.0),
+                                               ("left", 1.0),
+                                               ("stop", 1.0),
+                                               ("forward", 1.0),
+                                           ],
                                            language='en-US',
                                            show_all=False)
         except sr.UnknownValueError:
