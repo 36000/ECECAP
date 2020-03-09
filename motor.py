@@ -41,28 +41,30 @@ class Motors(threading.Thread):
         prev_r = 0
         try:
             while True:
-                r = self.bluetooth.getByte()
-                
-                if self.speech_controlled:
-                    continue
+                try:
+                    r = self.bluetooth.getByte()
+                    
+                    if self.speech_controlled:
+                        continue
 
-                if r != prev_r:
-                    print(r, end=' ')
-                if r == b'f':
-                    self.forward()
-                elif r == b's':
-                    self.stop()
-                elif r == b'r':
-                    self.turnRight()
-                elif r == b'l':
-                    self.turnLeft()
+                    if r != prev_r:
+                        print(r, end=' ')
+                    if r == b'f':
+                        self.forward()
+                    elif r == b's':
+                        self.stop()
+                    elif r == b'r':
+                        self.turnRight()
+                    elif r == b'l':
+                        self.turnLeft()
+                    prev_r = r
                 
-                prev_r = r
+                except bt.btcommon.BluetoothError:
+                    self.bluetooth.clean()
+                    self.bluetooth = BluetoothWrap()
+
         except KeyboardInterrupt:
             self.bluetooth.clean()
-        except bt.btcommon.BluetoothError:
-            self.bluetooth.clean()
-            self.bluetooth = BluetoothWrap()
 
 
     def _move(self, motors, speed, time):
