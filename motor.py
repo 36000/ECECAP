@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import threading
 from bluetooth_wrap import BluetoothWrap
+import bluetooth as bt
 
 from time import sleep
 from enum import Enum
@@ -59,7 +60,9 @@ class Motors(threading.Thread):
                 prev_r = r
         except KeyboardInterrupt:
             self.bluetooth.clean()
-        
+        except bt.btcommon.BluetoothError:
+            self.bluetooth.clean()
+            self.bluetooth = BluetoothWrap()
 
 
     def _move(self, motors, speed, time):
