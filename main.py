@@ -38,6 +38,7 @@ try:
             prev_r = r
             if motors.speech_controlled:
                 time.sleep(1)
+                motors.speech_controlled = False
 
 except KeyboardInterrupt:
     motors.clean()
